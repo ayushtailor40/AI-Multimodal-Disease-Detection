@@ -1,0 +1,45 @@
+{
+  "accuracy": 0.8333333333333334,
+  "class_names": [
+    "NORMAL",
+    "PNEUMONIA"
+  ],
+  "total_test_samples": 624,
+  "confusion_matrix": [
+    [
+      162,
+      72
+    ],
+    [
+      32,
+      358
+    ]
+  ],
+  "classification_report": {
+    "NORMAL": {
+      "precision": 0.8350515463917526,
+      "recall": 0.6923076923076923,
+      "f1-score": 0.7570093457943925,
+      "support": 234.0
+    },
+    "PNEUMONIA": {
+      "precision": 0.8325581395348837,
+      "recall": 0.9179487179487179,
+      "f1-score": 0.8731707317073171,
+      "support": 390.0
+    },
+    "accuracy": 0.8333333333333334,
+    "macro avg": {
+      "precision": 0.8338048429633181,
+      "recall": 0.8051282051282052,
+      "f1-score": 0.8150900387508548,
+      "support": 624.0
+    },
+    "weighted avg": {
+      "precision": 0.8334931671062095,
+      "recall": 0.8333333333333334,
+      "f1-score": 0.8296102119899703,
+      "support": 624.0
+    }
+  }
+}

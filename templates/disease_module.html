@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 24px; font-family: Arial, Helvetica, sans-serif; background: linear-gradient(135deg,#eef2ff,#f8fafc); color: #1e293b; }
+        .container { max-width: 850px; margin: auto; background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.10); }
+        header { text-align: center; margin-bottom: 24px; }
+        header p { color: #64748b; }
+        .warning { padding: 14px; border-radius: 8px; margin: 16px 0; line-height: 1.5; background: #fff7ed; border: 1px solid #fed7aa; color: #7c2d12; }
+        .error { padding: 14px; border-radius: 8px; margin: 16px 0; background: #fee2e2; color: #991b1b; }
+        .panel { background: #f8fafc; padding: 22px; border-radius: 12px; margin-bottom: 20px; }
+        input[type=file] { width: 100%; margin: 12px 0; padding: 12px; background: white; border: 1px solid #cbd5e1; border-radius: 8px; }
+        button, .back { display: inline-block; border: 0; border-radius: 8px; padding: 12px 18px; background: #0f766e; color: white; font-weight: bold; text-decoration: none; cursor: pointer; }
+        .back { background: #475569; margin-bottom: 18px; }
+        .result { border-left: 5px solid #0f766e; padding: 20px; background: #f8fafc; border-radius: 10px; }
+        .result img { display: block; max-width: 100%; max-height: 420px; object-fit: contain; margin: 16px auto; border-radius: 8px; }
+        .score-row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+        .footer { text-align: center; color: #64748b; font-size: 13px; margin-top: 24px; }
+        @media (max-width: 600px) { body { padding: 10px; } .container { padding: 18px; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a class="back" href="{{ url_for('home') }}">← Back to All Modules</a>
+    <header>
+        <h1>{{ page_title }}</h1>
+        <p>{{ page_subtitle }}</p>
+    </header>
+
+    <div class="warning">
+        <strong>Research prototype only:</strong> This model is not a clinical diagnostic system.
+        Dataset performance may not generalize to real patients. Displayed model scores are not
+        calibrated medical probabilities. Do not use this result to make medical decisions.
+        Consult a qualified healthcare professional for medical interpretation.
+    </div>
+
+    {% if error %}
+    <div class="error"><strong>Unable to process image:</strong> {{ error }}</div>
+    {% endif %}
+
+    <section class="panel">
+        <h2>Upload image</h2>
+        <p>Accepted formats: JPG, JPEG, PNG, BMP, TIFF. Maximum file size: 10 MB.</p>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="scan"><strong>Select image</strong></label>
+            <input id="scan" type="file" name="scan"
+                   accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff,image/*" required>
+            <button type="submit">Run Research Prediction</button>
+        </form>
+    </section>
+
+    {% if result %}
+    <section class="result">
+        <h2>Experimental model output</h2>
+        <p><strong>Top predicted class:</strong> {{ result.prediction }}</p>
+        <p><strong>Model score:</strong> {{ result.score }}% (not a medical probability)</p>
+        <img src="{{ url_for('static', filename='uploads/' + result.image_file) }}" alt="Uploaded image">
+        <h3>Class scores</h3>
+        {% for name, score in result.scores.items() %}
+        <div class="score-row"><span>{{ name }}</span><strong>{{ score }}%</strong></div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    <div class="footer">AI-Based Approach for Early Disease Detection · Research prototype</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}About Project - AI Multimodal Early Disease Detection{% endblock %}
+{% block breadcrumb %}About Project{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal-600)" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                About the Research Project
+            </h2>
+            <p class="card-subtitle">Master of Computer Applications (MCA) Final-Year Capstone Project</p>
+        </div>
+        <span class="pill-badge system-status">Academic Research Prototype</span>
+    </div>
+
+    <div class="card-body prose">
+        <h3>1. Project Title & Overview</h3>
+        <p>
+            <strong>Project Title:</strong> <em>“An AI-Based Multimodal Approach for Early Disease Detection”</em>
+        </p>
+        <p>
+            Traditional diagnostic workflows rely primarily on unimodal algorithms that process medical images in isolation from the patient's presenting symptoms and physiological vital signs. This project proposes a comprehensive multimodal clinical decision-support framework that combines <strong>deep convolutional image features (EfficientNet-B0)</strong>, <strong>natural language processing (TF-IDF + classification)</strong> for clinical symptom narratives, and <strong>standardized tabular machine learning</strong> for vital signs, integrated via a calibrated late-fusion consensus.
+        </p>
+
+        <h3>2. Technology Stack</h3>
+        <ul>
+            <li><strong>Programming Language:</strong> Python 3.13</li>
+            <li><strong>Web Application Framework:</strong> Flask (WSGI, Jinja2 templating, secure upload streaming)</li>
+            <li><strong>Deep Learning Engine:</strong> TensorFlow 2.x & Keras 3.x (EfficientNet-B0 transfer learning backbones)</li>
+            <li><strong>Machine Learning & Statistics:</strong> Scikit-learn (LogisticRegression, TfidfVectorizer, StandardScaler, classification metrics)</li>
+            <li><strong>Medical Image Processing & XAI:</strong> OpenCV (cv2) and Pillow (PIL) for image resizing, format verification, and Grad-CAM colormapping</li>
+            <li><strong>Frontend Architecture:</strong> Responsive HTML5, modern CSS3 design system, and Vanilla JavaScript with drag-and-drop file upload and instant image previewing</li>
+        </ul>
+
+        <h3>3. Multimodal Decision Fusion Architecture</h3>
+        <p>
+            For the Pneumonia pipeline, decisions are merged via a weighted linear late-fusion strategy. The final probability for class \(c\) (where \(c \in \{\text{NORMAL}, \text{PNEUMONIA}\}\)) is defined as:
+        </p>
+        <div class="code-block">
+P_final(c) = w_img * P_img(c) + w_text * P_text(c) + w_clinical * P_clinical(c)
+
+Where:
+  w_img      = 0.40  (40% weight assigned to deep Chest X-Ray radiograph features)
+  w_text     = 0.30  (30% weight assigned to TF-IDF symptom text narrative)
+  w_clinical = 0.30  (30% weight assigned to standardized physiological vitals)
+        </div>
+        <p>
+            This late-fusion architecture provides robust fault tolerance: if an image presents subtle or ambiguous opacities, high-fidelity symptom reports and elevated physiological biomarkers (e.g. fever, tachypnea, low SpO2) ensure sensitive detection.
+        </p>
+
+        <h3>4. Explainable AI: Grad-CAM Implementation</h3>
+        <p>
+            To demystify deep convolutional "black-box" predictions, the framework incorporates Gradient-weighted Class Activation Mapping (Grad-CAM). Grad-CAM computes the gradient of the winning class score \(y^c\) with respect to the feature maps \(A^k\) of the last convolutional layer (<code>top_conv</code> in EfficientNet-B0):
+        </p>
+        <div class="code-block">
+α_k^c = (1 / Z) * Σ_i Σ_j (∂y^c / ∂A_ij^k)
+Heatmap = ReLU( Σ_k α_k^c * A^k )
+        </div>
+        <p>
+            The resulting activation map is normalized, upsampled via bilinear interpolation to \(224 \times 224\), and overlaid onto the chest radiograph using a JET colormap.
+        </p>
+
+        <h3>5. Autonomous Disease Modules</h3>
+        <p>
+            The dashboard features four distinct clinical pipelines:
+        </p>
+        <ol>
+            <li><strong>Pneumonia + Multimodal Fusion:</strong> Tri-modal analysis on chest radiographs, patient symptoms, and vital signs.</li>
+            <li><strong>COVID-19 Radiography Classifier:</strong> 4-class differential diagnostic tool (COVID-19, Lung Opacity, Normal, Viral Pneumonia).</li>
+            <li><strong>Tuberculosis (TB) Screening Classifier:</strong> 2-class binary radiograph screener achieving 99.21% test accuracy.</li>
+            <li><strong>Lung Cancer CT Histopathology Classifier:</strong> 3-class axial CT scan classifier distinguishing benign nodules, malignant carcinomas, and normal parenchyma.</li>
+        </ol>
+
+        <h3>6. Research Disclaimers & Ethical Notes</h3>
+        <p>
+            This software is created strictly for academic demonstration and research purposes as part of an MCA degree. Displayed probability percentages represent uncalibrated model softmax activations and must not be interpreted as certified medical probabilities. No clinical diagnosis should ever be made without the physical examination, laboratory testing, and formal interpretation of a qualified licensed healthcare physician.
+        </p>
+    </div>
+</div>
+{% endblock %}

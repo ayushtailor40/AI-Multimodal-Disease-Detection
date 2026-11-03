@@ -1,0 +1,75 @@
+{
+  "accuracy": 0.8277165354330709,
+  "class_names": [
+    "COVID",
+    "Lung_Opacity",
+    "Normal",
+    "Viral Pneumonia"
+  ],
+  "total_test_samples": 3175,
+  "confusion_matrix": [
+    [
+      489,
+      20,
+      25,
+      8
+    ],
+    [
+      83,
+      746,
+      69,
+      4
+    ],
+    [
+      173,
+      129,
+      1195,
+      32
+    ],
+    [
+      0,
+      0,
+      4,
+      198
+    ]
+  ],
+  "classification_report": {
+    "COVID": {
+      "precision": 0.6563758389261745,
+      "recall": 0.9022140221402214,
+      "f1-score": 0.7599067599067599,
+      "support": 542.0
+    },
+    "Lung_Opacity": {
+      "precision": 0.8335195530726257,
+      "recall": 0.8270509977827051,
+      "f1-score": 0.8302726766833611,
+      "support": 902.0
+    },
+    "Normal": {
+      "precision": 0.9242072699149265,
+      "recall": 0.7815565729234794,
+      "f1-score": 0.8469170800850461,
+      "support": 1529.0
+    },
+    "Viral Pneumonia": {
+      "precision": 0.8181818181818182,
+      "recall": 0.9801980198019802,
+      "f1-score": 0.8918918918918919,
+      "support": 202.0
+    },
+    "accuracy": 0.8277165354330709,
+    "macro avg": {
+      "precision": 0.8080711200238863,
+      "recall": 0.8727549031620965,
+      "f1-score": 0.8322471021417648,
+      "support": 3175.0
+    },
+    "weighted avg": {
+      "precision": 0.8459766880447702,
+      "recall": 0.8277165354330709,
+      "f1-score": 0.830196471133875,
+      "support": 3175.0
+    }
+  }
+}

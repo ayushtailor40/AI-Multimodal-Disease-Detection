@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Multimodal Early Disease Detection{% endblock %} | MediScan AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <!-- Main Dashboard Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- ======================================================================
+         SIDEBAR NAVIGATION
+         ====================================================================== -->
+    <aside class="app-sidebar" id="appSidebar">
+        <div class="sidebar-header">
+            <a href="{{ url_for('home') }}" class="brand-link">
+                <div class="brand-logo-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c.55 0 1 .45 1 1v3h3c.55 0 1 .45 1 1s-.45 1-1 1h-3v3c0 .55-.45 1-1 1s-1-.45-1-1v-3H8c-.55 0-1-.45-1-1s.45-1 1-1h3V7c0-.55.45-1 1-1z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title">MediScan AI</div>
+                    <div class="brand-sub">Multimodal Diagnostics</div>
+                </div>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">Main Portal</div>
+            
+            <a href="{{ url_for('home') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Overview Dashboard</span>
+            </a>
+
+            <div class="nav-section-title">Disease Modules</div>
+
+            <a href="{{ url_for('pneumonia_detection') }}" class="nav-link {% if active_page == 'pneumonia' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                <span>Pneumonia Detection</span>
+                <span class="nav-badge multimodal">3-Modal</span>
+            </a>
+
+            <a href="{{ url_for('covid_detection') }}" class="nav-link {% if active_page == 'covid' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 8v8M8 12h8"></path>
+                </svg>
+                <span>COVID-19 Detection</span>
+                <span class="nav-badge">4-Class</span>
+            </a>
+
+            <a href="{{ url_for('tb_detection') }}" class="nav-link {% if active_page == 'tb' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <span>Tuberculosis (TB)</span>
+                <span class="nav-badge">Binary</span>
+            </a>
+
+            <a href="{{ url_for('lung_cancer_detection') }}" class="nav-link {% if active_page == 'lung_cancer' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                <span>Lung Cancer CT</span>
+                <span class="nav-badge">CT Scan</span>
+            </a>
+
+            <div class="nav-section-title">Clinical Records</div>
+
+            <a href="{{ url_for('patient_history') }}" class="nav-link {% if active_page == 'history' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span>Patient History</span>
+                <span class="nav-badge" style="background: rgba(37, 99, 235, 0.25); color: #93c5fd;">SQLite</span>
+            </a>
+
+            <div class="nav-section-title">Research & Metrics</div>
+
+            <a href="{{ url_for('evaluation_dashboard') }}" class="nav-link {% if active_page == 'evaluation' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Dataset & Evaluation</span>
+            </a>
+
+            <a href="{{ url_for('about_project') }}" class="nav-link {% if active_page == 'about' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>About Project</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>MCA Final-Year Project</strong>
+            <span>Multimodal Early Disease Detection</span>
+        </div>
+    </aside>
+
+    <!-- ======================================================================
+         MAIN CONTENT VIEWPORT
+         ====================================================================== -->
+    <main class="app-main">
+        <!-- Top Navbar -->
+        <header class="top-navbar">
+            <div class="top-nav-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="breadcrumbs">
+                    <a href="{{ url_for('home') }}">MediScan AI</a>
+                    <span>/</span>
+                    <span class="current">{% block breadcrumb %}Dashboard{% endblock %}</span>
+                </div>
+            </div>
+
+            <div class="top-nav-right">
+                <span class="pill-badge system-status">
+                    <span class="pulse-dot"></span>
+                    <span>AI Engine Online</span>
+                </span>
+                <span class="pill-badge research">
+                    <span>Educational Prototype</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Page Body Content -->
+        <div class="content-wrapper">
+            <!-- Research Disclaimer Banner -->
+            <div class="disclaimer-box">
+                <div class="disclaimer-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <div class="disclaimer-content">
+                    <div class="disclaimer-title">Educational & Research Prototype Disclaimer</div>
+                    <div>This system is an academic machine learning research project for MCA final-year demonstration. <strong>Displayed model outputs and softmax scores are experimental approximations and do not constitute certified clinical diagnoses or calibrated medical probabilities.</strong> Never use this system for self-diagnosis or medical treatment. Consult a licensed physician for professional medical imaging interpretation.</div>
+                </div>
+            </div>
+
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p><strong>An AI-Based Multimodal Approach for Early Disease Detection</strong></p>
+            <p>Master of Computer Applications (MCA) Final-Year Project · Built with Python, Flask, TensorFlow & Scikit-learn</p>
+        </footer>
+    </main>
+
+</div>
+
+<!-- Client-side Scripts -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

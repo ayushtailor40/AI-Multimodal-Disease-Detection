@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Tuberculosis Chest X-Ray Research Module{% endblock %}
+{% block breadcrumb %}Tuberculosis (TB) Detection{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                Tuberculosis (TB) Screening Classifier
+            </h2>
+            <p class="card-subtitle">Binary convolutional classifier for automated radiographic screening of pulmonary tuberculosis.</p>
+        </div>
+        <span class="pill-badge system-status">Chest X-Ray (PA View)</span>
+    </div>
+
+    <div class="card-body">
+        {% if error %}
+        <div class="alert-error">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <div><strong>Upload Error:</strong> {{ error }}</div>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('tb_detection') }}" enctype="multipart/form-data">
+            <!-- PATIENT IDENTIFICATION -->
+            <div class="form-row" style="margin-bottom: 16px;">
+                <div class="form-group">
+                    <label class="form-label" for="patient_name">Patient Name (Optional)</label>
+                    <input type="text" id="patient_name" name="patient_name" class="form-control" placeholder="e.g. Michael Scott" value="Anonymous Patient">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="patient_age">Age (Optional)</label>
+                    <input type="number" id="patient_age" name="patient_age" class="form-control" placeholder="e.g. 52" min="1" max="120">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="patient_gender">Gender</label>
+                    <select id="patient_gender" name="patient_gender" class="form-control">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Select or Drag Chest X-Ray Radiograph</label>
+                <div class="upload-area">
+                    <div class="upload-icon" style="color: #9333ea;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
+                    <div class="upload-text">Drag & drop chest radiograph here, or click to browse</div>
+                    <div class="upload-hint">Supported formats: JPG, JPEG, PNG, BMP, TIFF (Max: 10 MB)</div>
+                    <input type="file" name="scan" class="file-input" accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff,image/*" required>
+                </div>
+
+                <div class="preview-container">
+                    <img src="" alt="Thumbnail" class="preview-thumbnail">
+                    <div class="preview-info">
+                        <div class="preview-name">filename.jpg</div>
+                        <div class="preview-size">0.0 MB</div>
+                    </div>
+                    <button type="button" class="preview-remove">Change Image</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Screen Radiograph for Tuberculosis
+            </button>
+        </form>
+    </div>
+</div>
+
+{% if result %}
+<div class="result-card {% if result.prediction == 'TUBERCULOSIS' %}positive{% else %}negative{% endif %}">
+    <div class="result-header">
+        <div class="result-title-group">
+            <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-500);">
+                Experimental Deep Learning Inference
+            </span>
+            <h2>Tuberculosis Screening Result</h2>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            {% if result.prediction == 'TUBERCULOSIS' %}
+            <span class="prediction-badge danger">
+                ⚠️ TUBERCULOSIS INDICATED ({{ result.score }}%)
+            </span>
+            {% else %}
+            <span class="prediction-badge normal">
+                ✓ NORMAL / NO TB DETECTED ({{ result.score }}%)
+            </span>
+            {% endif %}
+
+            {% if result.record_id %}
+            <a href="{{ url_for('download_report', record_id=result.record_id) }}" class="btn-launch" style="background: linear-gradient(135deg, #059669, #047857); padding: 8px 16px; font-size: 13.5px;" title="Download Official Medical PDF Report">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Download PDF Report
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start;">
+        <!-- Left: Uploaded Image -->
+        <div class="image-viewer">
+            <h4>Uploaded Radiograph</h4>
+            <img src="{{ url_for('static', filename='uploads/' + result.image_file) }}" alt="Uploaded Chest Radiograph">
+        </div>
+
+        <!-- Right: 2-Class Confidence Meters -->
+        <div>
+            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--slate-800);">
+                Classification Confidence Distribution
+            </h3>
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 18px;">
+                {% for name, score in result.scores.items() %}
+                <div class="score-row" style="margin-bottom: 14px;">
+                    <div class="score-meta">
+                        <span style="font-weight: {% if name == result.prediction %}700{% else %}500{% endif %}; color: {% if name == result.prediction %}var(--slate-900){% else %}var(--slate-600){% endif %};">
+                            {{ name }}
+                        </span>
+                        <strong>{{ score }}%</strong>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill {% if name == 'TUBERCULOSIS' %}rose{% else %}green{% endif %}" style="width: {{ score }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div style="margin-top: 16px; padding: 14px; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: var(--radius-md); font-size: 12.5px; color: #6b21a8;">
+                <strong>Pathological Insights:</strong> Pulmonary tuberculosis frequently produces upper-lobe infiltrates, apical consolidations, cavitary lesions, or Ghon complexes. Confirmatory testing via sputum smear microscopy or GeneXpert MTB/RIF is always mandatory.
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

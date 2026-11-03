@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Pneumonia Detection & Multimodal Fusion{% endblock %}
+{% block breadcrumb %}Pneumonia Detection (Multimodal){% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                Pneumonia Multimodal Diagnostic Engine
+            </h2>
+            <p class="card-subtitle">Tri-modal diagnostic workflow fusing Chest X-Ray imaging (40%), patient symptom NLP (30%), and clinical vitals (30%).</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button type="button" class="pill-sample" onclick="fillPneumoniaDemo('normal')" title="Auto-fill sample normal case">
+                ⚡ Sample Normal Case
+            </button>
+            <button type="button" class="pill-sample" onclick="fillPneumoniaDemo('pneumonia')" title="Auto-fill sample pneumonia case">
+                ⚡ Sample Pneumonia Case
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body">
+        {% if error %}
+        <div class="alert-error">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <div><strong>Processing Error:</strong> {{ error }}</div>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('pneumonia_detection') }}" enctype="multipart/form-data">
+            <!-- PATIENT IDENTIFICATION -->
+            <div class="form-row" style="margin-bottom: 16px;">
+                <div class="form-group">
+                    <label class="form-label" for="patient_name">Patient Name (Optional)</label>
+                    <input type="text" id="patient_name" name="patient_name" class="form-control" placeholder="e.g. John Doe / Patient Alpha" value="Anonymous Patient">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="patient_gender">Gender</label>
+                    <select id="patient_gender" name="patient_gender" class="form-control">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- SECTION 1: CHEST X-RAY UPLOAD -->
+            <div class="form-group">
+                <label class="form-label">
+                    <span style="color: var(--blue-600); font-weight: 700;">Modality 1:</span> Chest X-Ray Radiograph (Required)
+                </label>
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
+                    <div class="upload-text">Drag & drop chest radiograph here, or click to browse</div>
+                    <div class="upload-hint">Supported formats: JPG, JPEG, PNG, BMP, TIFF (Max: 10 MB)</div>
+                    <input type="file" name="xray" class="file-input" accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff,image/*" required>
+                </div>
+
+                <div class="preview-container">
+                    <img src="" alt="Thumbnail" class="preview-thumbnail">
+                    <div class="preview-info">
+                        <div class="preview-name">filename.jpg</div>
+                        <div class="preview-size">0.0 MB</div>
+                    </div>
+                    <button type="button" class="preview-remove">Change Image</button>
+                </div>
+            </div>
+
+            <!-- SECTION 2: CLINICAL SYMPTOMS (NLP) -->
+            <div class="form-group">
+                <label class="form-label" for="symptoms">
+                    <span style="color: var(--teal-600); font-weight: 700;">Modality 2:</span> Patient Symptom Narrative (NLP Text Analysis)
+                </label>
+                <textarea id="symptoms" name="symptoms" class="form-control" placeholder="Describe clinical symptoms (e.g., persistent productive cough with green sputum, fever, sharp chest pain on deep inspiration, chills, and shortness of breath)..." required></textarea>
+                <div class="form-hint">Text is processed via TF-IDF vectorization and analyzed by our trained pulmonary NLP classifier.</div>
+            </div>
+
+            <!-- SECTION 3: CLINICAL VITALS -->
+            <div class="form-group">
+                <label class="form-label">
+                    <span style="color: #7c3aed; font-weight: 700;">Modality 3:</span> Physiological Clinical Vitals
+                </label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="age">Patient Age (years)</label>
+                        <input type="number" id="age" name="age" class="form-control" placeholder="e.g. 52" min="1" max="120" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="temperature">Body Temp (°C)</label>
+                        <input type="number" id="temperature" name="temperature" class="form-control" placeholder="e.g. 38.5" min="30.0" max="200.0" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="heart_rate">Heart Rate (BPM)</label>
+                        <input type="number" id="heart_rate" name="heart_rate" class="form-control" placeholder="e.g. 98" min="30" max="220" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="respiratory_rate">Resp. Rate (breaths/min)</label>
+                        <input type="number" id="respiratory_rate" name="respiratory_rate" class="form-control" placeholder="e.g. 24" min="8" max="60" step="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="spo2">Oxygen Saturation - SpO2 (%)</label>
+                        <input type="number" id="spo2" name="spo2" class="form-control" placeholder="e.g. 93" min="50" max="100" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cough">Persistent Cough Present?</label>
+                        <select id="cough" name="cough" class="form-control" required>
+                            <option value="1">Yes (Active Cough)</option>
+                            <option value="0">No (Absence of Cough)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="breathing_difficulty">Dyspnea / Breathing Difficulty?</label>
+                        <select id="breathing_difficulty" name="breathing_difficulty" class="form-control" required>
+                            <option value="1">Yes (Difficulty Breathing)</option>
+                            <option value="0">No (Normal Breathing)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="btn-submit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Run Tri-Modal Multimodal Fusion Analysis
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     MULTIMODAL DIAGNOSTIC RESULTS
+     ========================================================================== -->
+{% if result %}
+<div class="result-card {% if result.prediction == 'PNEUMONIA' %}positive{% else %}negative{% endif %}">
+    <div class="result-header">
+        <div class="result-title-group">
+            <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-500);">
+                Tri-Modal Late-Fusion Diagnosis
+            </span>
+            <h2>Consensus Decision Result</h2>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            {% if result.prediction == 'PNEUMONIA' %}
+            <span class="prediction-badge danger">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                PNEUMONIA DETECTED ({{ result.final_pneumonia }}%)
+            </span>
+            {% else %}
+            <span class="prediction-badge normal">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                NORMAL / HEALTHY ({{ result.final_normal }}%)
+            </span>
+            {% endif %}
+
+            {% if result.record_id %}
+            <a href="{{ url_for('download_report', record_id=result.record_id) }}" class="btn-launch" style="background: linear-gradient(135deg, #059669, #047857); padding: 8px 16px; font-size: 13.5px;" title="Download Official Medical PDF Report">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Download PDF Report
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- MODALITY BREAKDOWN -->
+    <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--slate-800);">
+        Individual Modality Confidence Breakdown
+    </h3>
+    <div class="modality-grid">
+        <!-- Modality 1: Image -->
+        <div class="modality-box">
+            <div class="modality-header">
+                <span class="modality-title">1. Chest X-Ray CNN</span>
+                <span class="modality-weight">Weight: 40%</span>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span>Pneumonia:</span>
+                    <strong>{{ result.image_pneumonia }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill rose" style="width: {{ result.image_pneumonia }}%;"></div>
+                </div>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span>Normal:</span>
+                    <strong>{{ result.image_normal }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill green" style="width: {{ result.image_normal }}%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modality 2: Text -->
+        <div class="modality-box">
+            <div class="modality-header">
+                <span class="modality-title">2. Symptom NLP</span>
+                <span class="modality-weight">Weight: 30%</span>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span>Pneumonia:</span>
+                    <strong>{{ result.text_pneumonia }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill rose" style="width: {{ result.text_pneumonia }}%;"></div>
+                </div>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span>Normal:</span>
+                    <strong>{{ result.text_normal }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill green" style="width: {{ result.text_normal }}%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modality 3: Clinical -->
+        <div class="modality-box">
+            <div class="modality-header">
+                <span class="modality-title">3. Clinical Vitals</span>
+                <span class="modality-weight">Weight: 30%</span>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span>Pneumonia:</span>
+                    <strong>{{ result.clinical_pneumonia }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill rose" style="width: {{ result.clinical_pneumonia }}%;"></div>
+                </div>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span>Normal:</span>
+                    <strong>{{ result.clinical_normal }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill green" style="width: {{ result.clinical_normal }}%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fusion Final -->
+        <div class="modality-box" style="background: var(--blue-50); border-color: var(--blue-200);">
+            <div class="modality-header">
+                <span class="modality-title" style="color: var(--blue-700);">4. Late Fusion Output</span>
+                <span class="modality-weight" style="background: var(--blue-200); color: var(--blue-800);">Consensus</span>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span style="color: var(--blue-900);">Final Pneumonia:</span>
+                    <strong style="color: var(--blue-900);">{{ result.final_pneumonia }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill rose" style="width: {{ result.final_pneumonia }}%;"></div>
+                </div>
+            </div>
+            <div class="score-row">
+                <div class="score-meta">
+                    <span style="color: var(--blue-900);">Final Normal:</span>
+                    <strong style="color: var(--blue-900);">{{ result.final_normal }}%</strong>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill green" style="width: {{ result.final_normal }}%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRAD-CAM VISUAL EXPLANATION -->
+    <div style="border-top: 1px solid var(--slate-200); padding-top: 24px; margin-top: 24px;">
+        <h3 style="font-size: 16px; font-weight: 700; color: var(--slate-900); display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal-600)" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="4"></circle>
+            </svg>
+            Explainable AI: Grad-CAM Pulmonary Saliency Map
+        </h3>
+        <p style="font-size: 13px; color: var(--slate-600); margin: 6px 0 16px;">
+            Gradient-weighted Class Activation Mapping (Grad-CAM) extracts gradients from the final convolutional layer (<code style="font-family: var(--font-mono); font-size: 12px; background: var(--slate-100); padding: 2px 4px; border-radius: 4px;">top_conv</code> in EfficientNetB0) to localize the anatomical lung regions influencing the deep neural network's diagnostic decision.
+        </p>
+
+        <div class="gradcam-grid">
+            <div class="image-viewer">
+                <h4>Original Uploaded Chest Radiograph</h4>
+                <img src="{{ url_for('static', filename='uploads/' + result.image_file) }}" alt="Original Chest X-Ray">
+            </div>
+            <div class="image-viewer">
+                <h4>Grad-CAM Heatmap Overlay Attention Map</h4>
+                <img src="{{ url_for('static', filename='uploads/' + result.gradcam_file) }}" alt="Grad-CAM Overlay">
+            </div>
+        </div>
+
+        <div style="margin-top: 18px; padding: 14px; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 12.5px; color: var(--slate-600);">
+            <strong>Interpretation Guidance:</strong> Red, yellow, and warm orange highlights indicate maximum gradient activation (regions the convolutional feature extractor prioritized, such as patchy infiltrates, consolidation, or pleural blunting). Cooler blue and green zones represent low-activation lung parenchyma.
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

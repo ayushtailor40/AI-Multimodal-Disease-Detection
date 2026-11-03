@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}Overview Dashboard - Multimodal Early Disease Detection{% endblock %}
+{% block breadcrumb %}Overview Dashboard{% endblock %}
+
+{% block content %}
+<!-- ==========================================================================
+     HERO BANNER
+     ========================================================================== -->
+<div class="hero-banner">
+    <div class="hero-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z"/>
+        </svg>
+        MCA Final-Year Capstone Project · Multimodal Deep Learning
+    </div>
+    <h1 class="hero-title">An AI-Based Multimodal Approach for Early Disease Detection</h1>
+    <p class="hero-desc">
+        A clinical AI research framework integrating deep convolutional vision backbones, natural language processing for patient symptom narratives, and tabular machine learning for vital physiological signs.
+    </p>
+
+    <div class="hero-stats">
+        <div class="hero-stat-item">
+            <span class="hero-stat-val">4</span>
+            <span class="hero-stat-lbl">Disease Pipelines</span>
+        </div>
+        <div class="hero-stat-item">
+            <span class="hero-stat-val">3</span>
+            <span class="hero-stat-lbl">Diagnostic Modalities</span>
+        </div>
+        <div class="hero-stat-item">
+            <span class="hero-stat-val">Late Fusion</span>
+            <span class="hero-stat-lbl">Decision Strategy</span>
+        </div>
+        <div class="hero-stat-item">
+            <span class="hero-stat-val">Grad-CAM</span>
+            <span class="hero-stat-lbl">Explainable AI</span>
+        </div>
+        <div class="hero-stat-item">
+            <span class="hero-stat-val">Independent</span>
+            <span class="hero-stat-lbl">Zero Modality Leakage</span>
+        </div>
+        <div class="hero-stat-item">
+            <span class="hero-stat-val">PDF & SQLite</span>
+            <span class="hero-stat-lbl">Diagnostic Reports & Logs</span>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     DISEASE MODULES GRID (4 DISTINCT CLINICAL ENGINES)
+     ========================================================================== -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal-600)" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Autonomous Disease Detection Modules
+            </h2>
+            <p class="card-subtitle">Choose an independent AI diagnostic module. Models are segregated to prevent cross-disease probability leakage.</p>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="modules-grid">
+            <!-- 1. Pneumonia & Multimodal -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon pneumonia">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
+                    </div>
+                    <span class="module-badge badge-multi">3 Modalities</span>
+                </div>
+                <h3 class="module-title">Pneumonia + Multimodal</h3>
+                <p class="module-desc">
+                    Combines Chest X-Ray radiograph analysis with NLP symptom text extraction and clinical vitals classification into a calibrated late-fusion consensus.
+                </p>
+                <div class="module-meta">
+                    <div class="meta-row"><span>Input Format:</span><strong>CXR + Text + Vitals</strong></div>
+                    <div class="meta-row"><span>Architecture:</span><strong>EfficientNetB0 + Fusion</strong></div>
+                    <div class="meta-row"><span>Output Classes:</span><strong>NORMAL / PNEUMONIA</strong></div>
+                </div>
+                <a href="{{ url_for('pneumonia_detection') }}" class="btn-launch primary-blue">
+                    Launch Multimodal Engine
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+
+            <!-- 2. COVID-19 -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon covid">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 8v8M8 12h8"></path>
+                        </svg>
+                    </div>
+                    <span class="module-badge badge-xray">Chest X-Ray</span>
+                </div>
+                <h3 class="module-title">COVID-19 Radiography</h3>
+                <p class="module-desc">
+                    Four-class pulmonary radiography classifier distinguishing between COVID-19 infection, non-COVID lung opacity, viral pneumonia, and normal chest findings.
+                </p>
+                <div class="module-meta">
+                    <div class="meta-row"><span>Input Format:</span><strong>Chest X-Ray (DICOM/JPG)</strong></div>
+                    <div class="meta-row"><span>Architecture:</span><strong>Deep ConvNet / B0</strong></div>
+                    <div class="meta-row"><span>Output Classes:</span><strong>4 Distinct Conditions</strong></div>
+                </div>
+                <a href="{{ url_for('covid_detection') }}" class="btn-launch">
+                    Open COVID Module
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+
+            <!-- 3. Tuberculosis -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon tb">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <span class="module-badge badge-xray">Chest X-Ray</span>
+                </div>
+                <h3 class="module-title">Tuberculosis (TB)</h3>
+                <p class="module-desc">
+                    Targeted mycobacterial screening pipeline detecting active pulmonary tuberculosis infiltrates and cavitations from standard posterior-anterior radiographs.
+                </p>
+                <div class="module-meta">
+                    <div class="meta-row"><span>Input Format:</span><strong>Chest X-Ray (PA View)</strong></div>
+                    <div class="meta-row"><span>Architecture:</span><strong>Transfer Learning B0</strong></div>
+                    <div class="meta-row"><span>Output Classes:</span><strong>NORMAL / TUBERCULOSIS</strong></div>
+                </div>
+                <a href="{{ url_for('tb_detection') }}" class="btn-launch">
+                    Open TB Module
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+
+            <!-- 4. Lung Cancer CT -->
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon lung-cancer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                    </div>
+                    <span class="module-badge badge-ct">Chest CT Scan</span>
+                </div>
+                <h3 class="module-title">Lung Cancer CT Scan</h3>
+                <p class="module-desc">
+                    Specialized computed tomography (CT) classifier assessing pulmonary nodules and tissue density across benign tumors, malignant carcinomas, and normal parenchyma.
+                </p>
+                <div class="module-meta">
+                    <div class="meta-row"><span>Input Format:</span><strong>Axial Chest CT Slice</strong></div>
+                    <div class="meta-row"><span>Architecture:</span><strong>EfficientNet + V1/V2</strong></div>
+                    <div class="meta-row"><span>Output Classes:</span><strong>Benign / Malignant / Normal</strong></div>
+                </div>
+                <a href="{{ url_for('lung_cancer_detection') }}" class="btn-launch">
+                    Open Lung CT Module
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     MULTIMODAL FUSION ARCHITECTURE WORKFLOW
+     ========================================================================== -->
+<div class="pipeline-card">
+    <div style="margin-bottom: 20px;">
+        <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal-600)" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Multimodal Fusion & Explainability Architecture
+        </h2>
+        <p class="card-subtitle">End-to-end dataflow illustrating how multi-source diagnostic signals are ingested, transformed, and merged.</p>
+    </div>
+
+    <div class="pipeline-diagram">
+        <!-- Step 1: Imaging -->
+        <div class="pipeline-step">
+            <div class="step-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+            </div>
+            <div class="step-title">Modality 1: Image</div>
+            <div class="step-desc">Chest X-Ray / CT resized to 224x224 RGB</div>
+            <span class="step-badge">Weight: 40%</span>
+        </div>
+
+        <div class="pipeline-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+
+        <!-- Step 2: NLP -->
+        <div class="pipeline-step">
+            <div class="step-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            <div class="step-title">Modality 2: NLP</div>
+            <div class="step-desc">Symptom free-text tokenized via TF-IDF</div>
+            <span class="step-badge">Weight: 30%</span>
+        </div>
+
+        <div class="pipeline-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+
+        <!-- Step 3: Clinical -->
+        <div class="pipeline-step">
+            <div class="step-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            <div class="step-title">Modality 3: Clinical</div>
+            <div class="step-desc">7 Vital signs standardized via StandardScaler</div>
+            <span class="step-badge">Weight: 30%</span>
+        </div>
+
+        <div class="pipeline-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+
+        <!-- Step 4: Decision Fusion -->
+        <div class="pipeline-step" style="border-color: var(--teal-500); background: var(--teal-50);">
+            <div class="step-icon" style="background: var(--teal-600); color: white;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </div>
+            <div class="step-title">Late Fusion Engine</div>
+            <div class="step-desc">Linear consensus + Grad-CAM heatmap visualization</div>
+            <span class="step-badge" style="background: var(--teal-600); color: white;">Final Consensus</span>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     MODEL EVALUATION SUMMARY CARDS (AUTHENTIC VERIFIED DATA)
+     ========================================================================== -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal-600)" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Model Evaluation Summary (Verified Test Set Metrics)
+            </h2>
+            <p class="card-subtitle">Real metrics obtained on held-out test splits. No fabricated figures.</p>
+        </div>
+        <a href="{{ url_for('evaluation_dashboard') }}" style="font-size: 13px; font-weight: 600; color: var(--teal-600); text-decoration: none;">
+            View Full Evaluation Details →
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="metrics-summary-grid">
+            <div class="metric-stat-card">
+                <div class="metric-label">Tuberculosis Accuracy</div>
+                <div class="metric-value" style="color: var(--teal-600);">99.21%</div>
+                <div class="metric-sub">631 test images · Precision 99.4%</div>
+            </div>
+            <div class="metric-stat-card">
+                <div class="metric-label">Pneumonia CXR Accuracy</div>
+                <div class="metric-value" style="color: var(--blue-600);">83.33%</div>
+                <div class="metric-sub">624 test images · Recall 91.8%</div>
+            </div>
+            <div class="metric-stat-card">
+                <div class="metric-label">Lung Cancer V1 / V2</div>
+                <div class="metric-value" style="color: #ea580c;">72.89% / 69.28%</div>
+                <div class="metric-sub">166 test CT slices · Trade-off balance</div>
+            </div>
+            <div class="metric-stat-card">
+                <div class="metric-label">Multimodal Fusion</div>
+                <div class="metric-value" style="color: #7c3aed;">Ensemble</div>
+                <div class="metric-sub">CXR (40%) + Text (30%) + Vitals (30%)</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

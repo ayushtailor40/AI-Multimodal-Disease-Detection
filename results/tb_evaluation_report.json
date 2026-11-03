@@ -1,0 +1,45 @@
+{
+  "accuracy": 0.9920760697305864,
+  "class_names": [
+    "NORMAL",
+    "TUBERCULOSIS"
+  ],
+  "total_test_samples": 631,
+  "confusion_matrix": [
+    [
+      523,
+      2
+    ],
+    [
+      3,
+      103
+    ]
+  ],
+  "classification_report": {
+    "NORMAL": {
+      "precision": 0.9942965779467681,
+      "recall": 0.9961904761904762,
+      "f1-score": 0.9952426260704091,
+      "support": 525.0
+    },
+    "TUBERCULOSIS": {
+      "precision": 0.9809523809523809,
+      "recall": 0.9716981132075472,
+      "f1-score": 0.976303317535545,
+      "support": 106.0
+    },
+    "accuracy": 0.9920760697305864,
+    "macro avg": {
+      "precision": 0.9876244794495745,
+      "recall": 0.9839442946990117,
+      "f1-score": 0.9857729718029771,
+      "support": 631.0
+    },
+    "weighted avg": {
+      "precision": 0.9920549220332893,
+      "recall": 0.9920760697305864,
+      "f1-score": 0.9920610623545684,
+      "support": 631.0
+    }
+  }
+}
